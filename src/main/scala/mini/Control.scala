@@ -165,3 +165,65 @@ class Control extends Module {
   io.csr_cmd := ctrlSignals(11)
   io.illegal := ctrlSignals(12)
 }
+
+object AluDecoder{
+  val A_XXX = 0.U(1.W)
+  val A_PC = 0.U(1.W)
+  val A_RS1 = 1.U(1.W)
+
+  // B_sel
+  val B_XXX = 0.U(1.W)
+  val B_IMM = 0.U(1.W)
+  val B_RS2 = 1.U(1.W)
+  val IMM_X = 0.U(3.W)
+  val IMM_I = 1.U(3.W)
+  val IMM_S = 2.U(3.W)
+  val IMM_U = 3.U(3.W)
+  val IMM_J = 4.U(3.W)
+  val IMM_B = 5.U(3.W)
+  val IMM_Z = 6.U(3.W)
+
+  import Alu._
+  import Instructions._
+
+
+}
+class AluDecoder extends Module {
+  val io = IO(new Bundle{
+    val inst = Input(UInt(32.W))
+    val alu_op = Output(UInt(4.W))
+    val alu_in1 = Output(UInt(2.W))
+    val alu_in2 = Output(UInt(2.W))
+  })
+  val A_XXX = 0.U(1.W)
+  val A_PC = 0.U(1.W)
+  val A_RS1 = 1.U(1.W)
+
+  // B_sel
+  val B_XXX = 0.U(1.W)
+  val B_IMM = 0.U(1.W)
+  val B_RS2 = 1.U(1.W)
+  val IMM_X = 0.U(3.W)
+  val IMM_I = 1.U(3.W)
+  val IMM_S = 2.U(3.W)
+  val IMM_U = 3.U(3.W)
+  val IMM_J = 4.U(3.W)
+  val IMM_B = 5.U(3.W)
+  val IMM_Z = 6.U(3.W)
+
+  import Instructions._
+
+  val signals = ListLookup(io.inst,
+    List( 15.U , A_XXX , B_XXX , IMM_X),
+    Array(
+      //            alu_op  in1    in2     type 
+      ADD   -> List( 0.U  , A_RS1 , B_RS2 , IMM_X ), 
+      ADDI  -> List( 0.U  , A_RS1 , B_IMM , IMM_I ),
+      SUB   -> List( 1.U  , A_RS1 , B_RS2 , IMM_X ),
+      )
+    )
+  
+}
+
+
+

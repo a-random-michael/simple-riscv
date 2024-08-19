@@ -6,6 +6,21 @@ import chisel3._
 import chisel3.util._
 import mini.Control._
 
+class ImmExt extends Module{
+  val io = IO(new Bundle{
+    val inst = Input(UInt(32.W))
+    val imm_type = Input(UInt(3.W))
+    val imm = Output(UInt(32.W))
+  })
+  val type_I = io.inst(31,20).asSInt 
+  val type_S = Cat(io.inst(31,25), io.inst(11,7)).asSInt
+  val type_B = Cat(io.inst(31), io.inst(7),io.inst(30,25), io.inst(11,8),0.U(1.W)).asSInt
+  val type_U = Cat(io.inst(31,12), 0.U(12.W)).asSInt
+  val type_J = Cat(io.inst(31), io.inst(19,12), io.inst(20), io.inst(30,21)).asSInt 
+  val type_csr = io.inst(19,15).zext
+}
+
+
 class ImmGenIO(xlen: Int) extends Bundle {
   val inst = Input(UInt(xlen.W))
   val sel = Input(UInt(3.W))

@@ -100,3 +100,27 @@ class AluArea(val width: Int) extends Alu {
   io.out := out
   io.sum := sum
 }
+class Alu2 (val width: Int) extends Module{
+  val io = IO(new Bundle{
+    val op = Input(UInt(4.W))
+    val in1 = Input(UInt(32.W))
+    val in2 = Input(UInt(32.W))
+    val out = Output(UInt(32.W))})
+
+  io.out := MuxLookup(io.op, 0.U)(
+    Seq(
+      0.U -> (io.in1 + io.in2) , // ADD
+      1.U -> (io.in1 - io.in2) , //SUB
+      2.U -> (io.in1.asSInt >> io.in2(4,0)).asUInt, //SRA
+      3.U -> (io.in1 >> io.in2(4,0)) , //SRL
+      4.U -> (io.in1 << io.in2(4,0)) , //SLL
+      5.U -> (io.in1.asSInt < io.in2.asSInt) , //SLT
+      6.U -> (io.in1 < io.in2) , //SLTU
+      7.U -> (io.in1 & io.in2) , // AND
+      8.U -> (io.in1 | io.in2) , // OR
+      9.U -> (io.in1 ^ io.in2) , //XOR
+      10.U -> io.in1 , 
+      11.U -> io.in2
+    )
+  )
+}
